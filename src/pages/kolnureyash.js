@@ -9,7 +9,7 @@ const Kolnuree = () => {
   const [accessGranted, setAccessGranted] = useState(false);
   const [accessInput, setAccessInput] = useState("");
 
-  const correctPassword = "Yash$5828";
+  const correctPassword = "Admin@1234";
 
   const [formData, setFormData] = useState({
     agencyName: "",
