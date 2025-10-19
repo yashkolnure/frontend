@@ -39,7 +39,7 @@ function RestaurantMenuPagewp() {
 
     // Try a short hex id (last 6 chars) or numeric id if your app uses it
     const lastSegment = rawParam.split('-').pop();
-    if (/^[0-9a-fA-F]{6}$/.test(lastSegment) || /^[0-9]+$/.test(lastSegment)) {
+    if (/^[0-9a-fA-F]{6}$/.test(lastSegment)) {
       setId(lastSegment);
       return;
     }
