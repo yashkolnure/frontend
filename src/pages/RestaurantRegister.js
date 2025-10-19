@@ -82,9 +82,20 @@ const RestaurantRegister = () => {
     setError("");
 
     try {
+      const slugifyString = (str) =>
+        str
+          .toString()
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .replace(/-{2,}/g, "-");
+
+      const payload = { ...formData, slug: slugifyString(formData.name) };
+
       const response = await axios.post(
-       "/api/admin/restaurant/register",
-        formData
+        "/api/admin/restaurant/register",
+        payload
       );
 
       setMessage(response.data.message || "✅ Registered Successfully!");

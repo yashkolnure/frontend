@@ -99,7 +99,17 @@ const RegisterFreePage = () => {
   setErrors(newErrors);
   if (Object.keys(newErrors).length > 0) return;
 
-  try {
+    // small slugify helper
+    const slugifyString = (str) =>
+      str
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .replace(/-{2,}/g, "-");
+
+    try {
     // ✅ Check if email exists first
     const checkRes = await axios.get(
       `/api/admin/restaurants/check-email?email=${formData.email}`
@@ -111,9 +121,10 @@ const RegisterFreePage = () => {
     }
 
     // ✅ Proceed with free plan or payment
-    if (formData.membership_level === 1) {
-      await axios.post("/api/admin/restaurants", formData);
-      setMessage("✅ Registered successfully with Free Plan!");
+      if (formData.membership_level === 1) {
+        const payload = { ...formData, slug: slugifyString(formData.name) };
+        await axios.post("/api/admin/restaurants", payload);
+        setMessage("✅ Registered successfully with Free Plan!");
       setTimeout(() => navigate("/login"), 1000);
     } else {
       // Paid plan → Razorpay flow (same as before)
@@ -137,7 +148,7 @@ const RegisterFreePage = () => {
         description:
           formData.membership_level === 2 ? "Premium Plan Payment" : "Pro Plan Payment",
         order_id: data.id,
-        handler: async function (response) {
+            handler: async function (response) {
           try {
             const verifyRes = await axios.post("/api/verify-payment", {
               razorpay_order_id: response.razorpay_order_id,
@@ -146,7 +157,8 @@ const RegisterFreePage = () => {
             });
 
             if (verifyRes.data.success) {
-              await axios.post("/api/admin/restaurants", formData);
+              const payload = { ...formData, slug: slugifyString(formData.name) };
+              await axios.post("/api/admin/restaurants", payload);
               setMessage("✅ Registered successfully with Paid Plan!");
               setTimeout(() => navigate("/login"), 1000);
             } else {

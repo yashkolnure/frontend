@@ -96,9 +96,19 @@ const Kolnure = () => {
       }
 
       // ✅ Register directly (no Razorpay)
+      const slugifyString = (str) =>
+        str
+          .toString()
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .replace(/-{2,}/g, "-");
+
+      const payload = { ...formData, slug: slugifyString(formData.name) };
       await axios.post(
         "/api/admin/restaurant/register",
-        formData
+        payload
       );
 
       setMessage("✅ Registered successfully!");
