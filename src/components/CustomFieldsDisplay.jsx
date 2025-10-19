@@ -10,45 +10,47 @@ import {
 
 const API_BASE = "";
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * CustomFieldsDisplay component
- *
- * Displays restaurant custom fields such as instagram, facebook, website, contact, and custom line.
- *
- * @param {string} restaurantId - The id of the restaurant to fetch custom fields for.
- * @returns {JSX.Element} - The rendered component.
- */
-/*******  891c9316-61c6-41c4-9e38-41f3dd233faf  *******/
-const CustomFieldsDisplay = ({ id }) => {
+const CustomFieldsDisplay = ({ restaurantId }) => {
   const [fields, setFields] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!id) {
-      setError("Missing id");
-      setLoading(false);
+    if (!restaurantId) {
+      // show a neutral loading state while waiting for parent to resolve id
+      setError("");
+      setFields(null);
+      setLoading(true);
       return;
     }
 
     const fetchFields = async () => {
       try {
+        // clear old error and show loading while fetching
+        setError("");
+        setLoading(true);
+
         const res = await fetch(
-          `${API_BASE}/api/admin/custom-fields?restaurantId=${id}`
+          `${API_BASE}/api/admin/custom-fields?restaurantId=${restaurantId}`
         );
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || `Request failed with status ${res.status}`);
+        }
 
         const data = await res.json();
         setFields(data);
       } catch (e) {
         setError(e.message || "Failed to fetch fields");
+        setFields(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchFields();
-  }, [id]);
+  }, [restaurantId]);
 
   if (loading) return <p className="text-gray-500">Loading info...</p>;
   if (error) return <p className="text-red-600">Error: {error}</p>;

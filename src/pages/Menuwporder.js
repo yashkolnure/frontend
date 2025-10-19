@@ -307,7 +307,7 @@ if (!adminPhone) {
         </div>
         <div>
 
-             <CustomFieldsDisplay restaurantId={id} />
+             <CustomFieldsDisplay restaurantId={restaurantDetails?._id || id} />
         </div>
         
         <div className="flex flex-wrap justify-center">
@@ -315,7 +315,7 @@ if (!adminPhone) {
         </div>
       </div>
 
-
+          
       {cart.length > 0 && (
         <div className="fixed bottom-5 right-5">
             <button
