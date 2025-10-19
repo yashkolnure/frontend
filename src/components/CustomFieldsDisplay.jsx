@@ -10,14 +10,24 @@ import {
 
 const API_BASE = "";
 
-const CustomFieldsDisplay = ({ restaurantId }) => {
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * CustomFieldsDisplay component
+ *
+ * Displays restaurant custom fields such as instagram, facebook, website, contact, and custom line.
+ *
+ * @param {string} restaurantId - The id of the restaurant to fetch custom fields for.
+ * @returns {JSX.Element} - The rendered component.
+ */
+/*******  891c9316-61c6-41c4-9e38-41f3dd233faf  *******/
+const CustomFieldsDisplay = ({ id }) => {
   const [fields, setFields] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!restaurantId) {
-      setError("Missing restaurantId");
+    if (!id) {
+      setError("Missing id");
       setLoading(false);
       return;
     }
@@ -25,7 +35,7 @@ const CustomFieldsDisplay = ({ restaurantId }) => {
     const fetchFields = async () => {
       try {
         const res = await fetch(
-          `${API_BASE}/api/admin/custom-fields?restaurantId=${restaurantId}`
+          `${API_BASE}/api/admin/custom-fields?restaurantId=${id}`
         );
 
         const data = await res.json();
@@ -38,7 +48,7 @@ const CustomFieldsDisplay = ({ restaurantId }) => {
     };
 
     fetchFields();
-  }, [restaurantId]);
+  }, [id]);
 
   if (loading) return <p className="text-gray-500">Loading info...</p>;
   if (error) return <p className="text-red-600">Error: {error}</p>;
