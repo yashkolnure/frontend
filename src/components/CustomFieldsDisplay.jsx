@@ -53,7 +53,6 @@ const CustomFieldsDisplay = ({ restaurantId }) => {
   }, [restaurantId]);
 
   if (loading) return <p className="text-gray-500">Loading info...</p>;
-  if (error) return <p className="text-red-600">Error: {error}</p>;
   if (!fields) return <p className="text-gray-500">No info found.</p>;
 
   return (
