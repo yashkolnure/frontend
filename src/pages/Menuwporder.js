@@ -7,7 +7,10 @@ import { Helmet } from "react-helmet";
 import MenuCard from "../components/MenuCardWp";
 
 function RestaurantMenuPagewp() {
-  const { id } = useParams();
+  const params = useParams();
+  const rawParam = params.slug || params.id || params.param || null;
+  const [id, setId] = useState(null);
+
   const [searchParams] = useSearchParams();
   const tableFromURL = searchParams.get("table");
   const [showModal, setShowModal] = useState(false);
@@ -25,13 +28,37 @@ function RestaurantMenuPagewp() {
   const [offers, setOffers] = useState([]);
 
   useEffect(() => {
+    if (!rawParam) return;
+
+    // Try to extract a 24-char Mongo ObjectId at the end of the param
+    const idMatch = rawParam.match(/([0-9a-fA-F]{24})$/);
+    if (idMatch) {
+      setId(idMatch[0]);
+      return;
+    }
+
+    // Try a short hex id (last 6 chars) or numeric id if your app uses it
+    const lastSegment = rawParam.split('-').pop();
+    if (/^[0-9a-fA-F]{6}$/.test(lastSegment) || /^[0-9]+$/.test(lastSegment)) {
+      setId(lastSegment);
+      return;
+    }
+
+    // Fallback: ask backend for the restaurant by slug to get the id
+    fetch(`/api/admin/restaurants/slug/${rawParam}`)
+      .then(res => res.json())
+      .then(data => {
+        // backend might return _id or id
+        if (data && (data._id || data.id)) setId(data._id || data.id);
+      })
+      .catch(err => console.error(err));
+  }, [rawParam]);
+  useEffect(() => {
     const fetchOffers = async () => {
       try {
+        if (!id) return; // wait until id is resolved
         const token = localStorage.getItem("token");
-        const res = await fetch(
-          `/api/admin/${id}/offers`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await fetch(`/api/admin/${id}/offers`, { headers: { Authorization: `Bearer ${token}` } });
         const data = await res.json();
         if (res.ok && Array.isArray(data)) setOffers(data);
       } catch {
@@ -48,6 +75,7 @@ function RestaurantMenuPagewp() {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
+        if (!id) return; // wait until id is available
         const token = localStorage.getItem("token");
 
         const [menuRes, detailsRes] = await Promise.all([
