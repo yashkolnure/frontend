@@ -10,7 +10,6 @@ function RestaurantMenuPagewp() {
   const params = useParams();
   const rawParam = params.slug || params.id || params.param || null;
   const [id, setId] = useState(null);
-
   const [searchParams] = useSearchParams();
   const tableFromURL = searchParams.get("table");
   const [showModal, setShowModal] = useState(false);
@@ -307,8 +306,8 @@ if (!adminPhone) {
           )}
         </div>
         <div>
-        
-             <CustomFieldsDisplay restaurantId={_id} />
+
+             <CustomFieldsDisplay restaurantId={id} />
         </div>
         
         <div className="flex flex-wrap justify-center">
