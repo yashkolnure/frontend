@@ -94,37 +94,27 @@ const Header = () => {
             <a href="/portfolio" className="hover:text-blue-600 font-medium">
               Portfolio
             </a>
-            <a href="/agency" className="hover:text-blue-600 font-medium">
-              Agency
-            </a>
-            <a href="/membership" className="hover:text-blue-600 font-medium">
-              Pricing
-            </a>
-            <a href="/contact" className="hover:text-blue-600 font-medium">
-              Contact Us
-            </a>
-            {!token ? (
               <a
                 href="/petoba-billing-landing"
                 className="hover:text-blue-600 font-medium"
               >
               Petoba Billing App
               </a>
-            ) : null}
+            <a href="/contact" className="hover:text-blue-600 font-medium">
+              Contact Us
+            </a>
+            
+            <a href="/agency-login" className="hover:text-blue-600 font-medium">
+              Partner Login
+            </a>
+              
+          
             {token ? (
               <>
-                <a
-                  href="/admin/dashboard"
-                  className="hover:text-blue-600 font-medium"
-                >
-                  Manage Orders 
-                </a>
-                <a
-                  href="/dashboard"
-                  className="hover:text-blue-600 font-medium"
-                >
-                  Dashboard 
-                </a>
+            <a href="/dashboard" className="hover:text-blue-600 font-medium">
+              Dashboard
+            </a>
+               
                 <button
                   onClick={handleLogout}
                   className="px-5 py-2 rounded-full text-xl bg-gradient-to-r from-red-600 via-black to-orange-600 text-white font-semibold shadow-md hover:scale-105 transition-transform"
@@ -140,8 +130,8 @@ const Header = () => {
                 Login →
               </a>
             )}
-          </nav>
 
+          </nav>
            
 
           {/* Hamburger Menu Button */}
@@ -184,22 +174,10 @@ const Header = () => {
           {token ? (
               <>
                 <a
-                  href="/admin/dashboard"
-                  className="hover:text-blue-600 font-medium"
-                >
-                  Manage Orders 
-                </a>
-                <a
                   href="/dashboard"
                   className="hover:text-blue-600 font-medium"
                 >
                   Dashboard 
-                </a>
-                <a
-                  href="/petoba-billing"
-                  className="hover:text-blue-600 font-medium"
-                >
-                  Download Billing App 
                 </a>
                 <button
                   onClick={handleLogout}

@@ -69,7 +69,7 @@ function Loginfree() {
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-pink-300 to-purple-300 rounded-full filter blur-3xl opacity-30"></div>
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-r from-green-400 to-blue-500 rounded-full blur-3xl opacity-20"></div>
 
-      <h2 className="text-4xl font-bold text-center mb-4">Login Page</h2>
+      <h2 className="text-4xl font-bold text-center pb-6">Login Page</h2>
 
       {/* Login card */}
       <div className="relative z-10 w-full max-w-md mx-auto bg-white p-8 rounded-3xl shadow-lg">

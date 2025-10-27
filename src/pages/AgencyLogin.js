@@ -69,7 +69,7 @@ const AgencyLogin = () => {
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-r from-green-400 to-blue-500 rounded-full blur-3xl opacity-20"></div>
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-gradient-to-r from-blue-300 to-green-300 rounded-full filter blur-3xl opacity-30"></div>
 
-      <h2 className="text-4xl font-bold text-center mb-4">Agency Login</h2>
+      <h2 className="text-4xl font-bold text-center mb-4">Partner Login</h2>
       <p className="text-center text-gray-600 mb-12">
         Manage your clients, view reports, and handle agency operations in one
         dashboard.
@@ -114,7 +114,7 @@ const AgencyLogin = () => {
         <p className="text-gray-600 text-sm mt-4 text-center">
           Don’t have an account?{" "}
           <Link
-            to="/membership"
+            to="https://wa.me/917499835687?text=Hello%2C%20I%20would%20like%20to%20register%20as%20an%20agency%20partner."
             className="text-blue-600 font-semibold hover:underline"
           >
             Register now
