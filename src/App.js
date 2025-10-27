@@ -77,7 +77,7 @@ function AppWrapper() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/register-restaurant" element={<RestaurantRegister />} />
         <Route path="/restaurant-details" element={<RestaurantDetails />} />
-        <Route path="/" element={<Loginfree />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/freefree" element={<BulkUploadmenu />} />
         <Route path="/freefree1" element={<BulkUploadmenu1 />} />
         <Route path="/login1" element={<AdminLoginPage1 />} />
