@@ -31,7 +31,7 @@ const CustomFieldsDisplay = ({ restaurantId }) => {
         setLoading(true);
 
         const res = await fetch(
-          `${API_BASE}/api/admin/custom-fields?restaurantId=${restaurantId}`
+          `${API_BASE}http://localhost:5000/api/admin/custom-fields?restaurantId=${restaurantId}`
         );
 
         if (!res.ok) {

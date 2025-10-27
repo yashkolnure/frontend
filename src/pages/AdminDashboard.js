@@ -8,11 +8,15 @@ function AdminDashboard() {
   const [orders, setOrders] = useState([]);
   const [billingData, setBillingData] = useState([]);
   const [restaurantDetails, setRestaurantDetails] = useState({ name: "", logo: "", address: "", contact: "" });
-  const [newOrderQueue, setNewOrderQueue] = useState([]);
   const [orderHistory, setOrderHistory] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [newOrderQueue, setNewOrderQueue] = useState([]); // queued incoming orders
+const [accepting, setAccepting] = useState(false);
+const [orderStatuses, setOrderStatuses] = useState({});
+
+
   // State for offers
 const [offers, setOffers] = useState([]);      // fetched offers
 const [newOffer, setNewOffer] = useState({     // for upload form
@@ -59,7 +63,7 @@ useEffect(() => {
 const fetchOffers = async () => {
   try {
     const res = await fetch(
-      `/api/admin/${restaurantId}/offers`,
+      `http://localhost:5000/api/admin/${restaurantId}/offers`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     const data = await res.json();
@@ -76,7 +80,7 @@ const handleAddOffer = async () => {
   }
   try {
     const res = await fetch(
-      `/api/admin/${restaurantId}/offers`,
+      `http://localhost:5000/api/admin/${restaurantId}/offers`,
       {
         method: "POST",
         headers: {
@@ -113,7 +117,7 @@ const handleAddOffer = async () => {
     if (!window.confirm("Are you sure you want to delete this offer?")) return;
     try {
       const res = await fetch(
-        `/api/admin/${restaurantId}/offers/${offerId}`,
+        `http://localhost:5000/api/admin/${restaurantId}/offers/${offerId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -155,7 +159,7 @@ const handleImageUpload = (e) => {
   }
   const fetchRestaurantDetails = async () => {
     try {
-      const res = await fetch(`/api/admin/${restaurantId}/details`, {
+      const res = await fetch(`http://localhost:5000/api/admin/${restaurantId}/details`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -176,7 +180,7 @@ const handleImageUpload = (e) => {
   // Fetch Menu
   const fetchMenu = async () => {
     try {
-      const response = await fetch(`/api/admin/${restaurantId}/menu`, {
+      const response = await fetch(`http://localhost:5000/api/admin/${restaurantId}/menu`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -219,7 +223,7 @@ const handleImageUpload = (e) => {
   
   // Fetch Billing Data
   const fetchBillingData = async () => {
-    const res = await fetch(`/api/admin/${restaurantId}/billing`, {
+    const res = await fetch(`http://localhost:5000/api/admin/${restaurantId}/billing`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -232,7 +236,7 @@ const handleImageUpload = (e) => {
     const fetchOrderHistory = async () => {
       setLoadingHistory(true); // move here so UI shows loading
       try {
-        const res = await fetch(`/api/orders/${restaurantId}/order-history`, {
+        const res = await fetch(`http://localhost:5000/api/orders/${restaurantId}/order-history`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -396,11 +400,12 @@ const filteredOrders = groupedOrders.filter((order) => {
       .summary-value {
         text-align: right;
       }
+        td.text-center { text-align: center; }
+        td.text-right { text-align: right; }
         </style>
       </head>
       <body>
         <div class="bill-container">
-          ${restaurantDetails.logo ? `<img src="${restaurantDetails.logo}" class="logo" />` : ''}
           <h3>${restaurantDetails.name || 'Restaurant Name'}</h3>
           <p>${restaurantDetails.address || ''}</p>
           <p>${restaurantDetails.contact || ''}</p>
@@ -413,7 +418,7 @@ const filteredOrders = groupedOrders.filter((order) => {
               <tr>
                 <th class="item">Item</th>
                 <th class="qty">Qty</th>
-                <th class="summary">Total</th>
+                <th class="total">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -421,9 +426,20 @@ const filteredOrders = groupedOrders.filter((order) => {
             </tbody>
           </table>
           <hr />
-          <p class="summary">Orders: ${totalOrders}</p>
-          <p class="summary">Subtotal: ₹${subTotal}</p>
-          <p class="summary">TOTAL: ₹${totalAmount}</p>
+          <table class="summary-table">
+            <tr>
+              <td class="summary-label">Orders:</td>
+              <td class="summary-value">${totalOrders}</td>
+            </tr>
+            <tr>
+              <td class="summary-label">Subtotal:</td>
+              <td class="summary-value">₹${subTotal}</td>
+            </tr>
+            <tr>
+              <td class="summary-label"><strong>TOTAL:</strong></td>
+              <td class="summary-value"><strong>₹${totalAmount}</strong></td>
+            </tr>
+          </table>
           <hr />
           <p>Thank You!  Visit Again!</p>
         </div>
@@ -438,58 +454,279 @@ const filteredOrders = groupedOrders.filter((order) => {
     printWindow.print();
   };
   
-  const fetchOrders = async () => {
-    const res = await fetch(`/api/admin/${restaurantId}/orders`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+
+  // ----- Added: KOT print function -----
+const printKOT = (order) => {
+  if (!order) return;
+  const items = Array.isArray(order.items) ? order.items : [];
+  const itemsHtml = items
+    .map(
+      (it) => `<tr>
+        <td style="text-align:left;padding:4px;">${it.itemId?.name || "Deleted Item"}</td>
+        <td style="text-align:center;padding:4px;">${it.quantity}</td>
+      </tr>`
+    )
+    .join("");
+
+  const kotHtml = `
+  <html>
+    <head>
+      <title>KOT - Table ${order.tableNumber}</title>
+      <style>
+        body { font-family: Arial, sans-serif; font-size:12px; margin:8px; }
+        .header { text-align:center; margin-bottom:6px; }
+        table { width:100%; border-collapse:collapse; }
+        td { border-bottom: 1px dashed #ccc; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <small>Table: ${order.tableNumber} &nbsp; | &nbsp; ${new Date(order.createdAt || order.timestamp || Date.now()).toLocaleString()}</small>
+      </div>
+      <table>
+        <thead>
+          <tr><th style="text-align:left">Item</th><th style="text-align:center">Qty</th></tr>
+        </thead>
+        <tbody>
+          ${itemsHtml}
+        </tbody>
+      </table>
+      <p style="margin-top:8px;"><small>Order ID: ${order._id || order.invoiceNumber || ""}</small></p>
+    </body>
+  </html>
+  `;
+
+  const w = window.open("", "_blank", "width=300,height=500");
+  if (!w) {
+    alert("Popup blocked. Please allow popups to print KOT.");
+    return;
+  }
+  w.document.write(kotHtml);
+  w.document.close();
+  // give a small delay to ensure resources load, then print
+  setTimeout(() => {
+    try { w.print(); } catch (e) { console.error("KOT print failed", e); }
+  }, 300);
+};
+  
+
+
+// ----- Added: share bill via WhatsApp -----
+const shareBillViaWhatsApp = (tableNumber) => {
+  const data = billingData.find((d) => d.tableNumber == tableNumber);
+  if (!data) {
+    alert("No billing data found for this table.");
+    return;
+  }
+
+  // Find customer's WhatsApp number
+  const orderWithPhone = data.orders.find(
+    (o) => o.wpno || o.wpNo || o.phone || o.customerPhone
+  );
+  const rawPhone =
+    orderWithPhone?.wpno ||
+    orderWithPhone?.wpNo ||
+    orderWithPhone?.phone ||
+    orderWithPhone?.customerPhone ||
+    "";
+  const normalized = rawPhone.replace(/\D/g, "");
+
+  if (!normalized) {
+    alert("Customer phone number not available for this table.");
+    return;
+  }
+
+  // Build item list neatly
+  const itemsLines = data.orders.flatMap((order) =>
+    (order.items || []).map((it) => {
+      const name = it.itemId?.name || it.name || "Item";
+      const qty = it.quantity || 1;
+      const price = (it.price ?? it.itemId?.price ?? 0).toFixed(2);
+      return `• ${name} (x${qty}) - ₹${price}`;
+    })
+  );
+
+  // Build WhatsApp message
+  const lines = [
+    `*${restaurantDetails.name || "Restaurant"}*`,
+    `${restaurantDetails.address || ""}`,
+    "",
+    `*${new Date().toLocaleDateString()}*  *${new Date().toLocaleTimeString()}*`,
+    `*Table:* ${data.tableNumber || "N/A"}`,
+    "",
+    "────────────────────────────",
+    "*Bill Summary*",
+    "────────────────────────────",
+    ...itemsLines,
+    "────────────────────────────",
+    `*Total:* ₹${(data.totalAmount ?? 0).toFixed(2)}`,
+    "",
+    "*Thank you for visiting!*",
+    "_Hope to see you again soon!_",
+  ].filter(Boolean);
+
+  const text = lines.join("\n");
+  const waUrl = `https://wa.me/${normalized}?text=${encodeURIComponent(text)}`;
+  window.open(waUrl, "_blank");
+};
+
+  // Fetch all orders (for Active Orders tab) — no status filter
+const fetchAllOrders = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const restaurantId = localStorage.getItem("restaurantId");
+    if (!token || !restaurantId) return;
+
+    const res = await fetch(
+      `http://localhost:5000/api/admin/${restaurantId}/orders`, // no ?status => all orders
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (!res.ok) {
+      console.error("fetchAllOrders failed:", res.status, await res.text().catch(()=>""));
+      return;
+    }
+
     const data = await res.json();
     setOrders(data);
-  
-    const previousIds = latestOrderIdsRef.current;
-    const currentIds = data.map(order => order._id);
-    const newOrders = data.filter(order => !previousIds.includes(order._id));
-  
-    if (newOrders.length > 0) {
-      setNewOrderQueue(prev => [...prev, ...newOrders]);
-  
-      // Show popup only if none is currently visible
-      if (!newOrderPopup) {
-        const nextOrder = newOrders[0];
-        setNewOrderPopup(nextOrder);
-        setNewOrderQueue(prev => prev.slice(1));
-      }
+
+    // Build billing from fresh orders immediately (client-side fallback)
+    if (Array.isArray(data)) {
+      const groupedOrders = groupOrdersByTable(data);
+      const totalBillingData = calculateBillingData(groupedOrders);
+      setBillingData(totalBillingData);
     }
-  
+  } catch (err) {
+    console.error("Error in fetchAllOrders:", err);
+  }
+
+
+  // // (Optional) If you do billing grouping below:
+  //   const groupedOrders = groupOrdersByTable(data);
+  //   const totalBillingData = calculateBillingData(groupedOrders);
+  //   setBillingData(totalBillingData);
+};
+
+// Fetch only pending orders (for popup/queue)
+const fetchPendingOrders = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const restaurantId = localStorage.getItem("restaurantId");
+    if (!token || !restaurantId) return;
+
+    const res = await fetch(
+      `http://localhost:5000/api/admin/${restaurantId}/orders?status=pending`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (!res.ok) {
+      console.error("fetchPendingOrders failed:", res.status, await res.text().catch(()=>""));
+      return;
+    }
+
+    const data = await res.json();
+
+    // queue new pending orders for popup sound/alert
+    const prevIds = latestOrderIdsRef.current || [];
+    const currentIds = data.map((o) => o._id);
+    const newOrders = data.filter((o) => !prevIds.includes(o._id));
+
+    if (newOrders.length > 0) {
+      setNewOrderQueue((prev) => [...prev, ...newOrders]);
+      if (!newOrderPopup) {
+        setNewOrderPopup(newOrders[0]);
+        setNewOrderQueue((prev) => prev.slice(1));
+      }
+      // play sound
+      if (audioRef.current) audioRef.current.play().catch(()=>{});
+    }
+
     latestOrderIdsRef.current = currentIds;
-  
-    // (Optional) If you do billing grouping below:
-    const groupedOrders = groupOrdersByTable(data);
-    const totalBillingData = calculateBillingData(groupedOrders);
-    setBillingData(totalBillingData);
-  };
+
+    // keep a separate statuses map (optional)
+    const statusMap = {};
+    data.forEach((o) => (statusMap[o._id] = o.status || "pending"));
+    setOrderStatuses((prev) => ({ ...prev, ...statusMap }));
+  } catch (err) {
+    console.error("Error in fetchPendingOrders:", err);
+  }
+};
   
   useEffect(() => {
     fetchMenu();
-    fetchOrders();
+    fetchAllOrders();
     fetchOrderHistory();
+    fetchPendingOrders();
   
     // 🔄 Auto-refresh orders every 10 seconds
     const interval = setInterval(() => {
-      fetchOrders();
+      fetchAllOrders();
+      fetchPendingOrders();
     }, 1000); // 1,000ms = 10s
   
     // Cleanup when component unmounts
     return () => clearInterval(interval);
   }, []);
   
-// Accept Button
-const handleAccept = () => {
-  if (newOrderQueue.length > 0) {
-    const next = newOrderQueue[0];
-    setNewOrderPopup(next);
-    setNewOrderQueue(prev => prev.slice(1));
-  } else {
+// Update handleAccept: after successful status update refresh full orders list (don't lose active orders view)
+const handleAccept = async () => {
+  const current = newOrderPopup;
+  if (!current) {
+    if (newOrderQueue.length > 0) {
+      setNewOrderPopup(newOrderQueue[0]);
+      setNewOrderQueue((prev) => prev.slice(1));
+    }
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+  const restaurantId = localStorage.getItem("restaurantId");
+  if (!token || !restaurantId) {
+    alert("Authentication missing. Please login again.");
+    return;
+  }
+
+  setAccepting(true);
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/admin/${restaurantId}/orders/${current._id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: "ok" }),
+      }
+    );
+
+    const resText = await res.text().catch(() => "");
+    let resJson;
+    try { resJson = JSON.parse(resText); } catch { resJson = resText; }
+
+    if (!res.ok) {
+      console.error("Accept failed:", res.status, resJson);
+      alert(`Failed to accept order: ${resJson?.message || res.statusText || res.status}`);
+      return;
+    }
+
+    // Update local pending & queue state
+    setNewOrderQueue((prev) => prev.filter((o) => o._id !== current._id));
     setNewOrderPopup(null);
+
+    // Refresh both lists so Active Orders tab shows updated status
+    await fetchAllOrders();     // ensures the orders grid contains the updated order (status ok)
+    await fetchPendingOrders(); // refresh pending queue
+
+  } catch (err) {
+    console.error("Error accepting order:", err);
+    alert("Failed to accept order. Please try again.\n" + (err.message || ""));
+  } finally {
+    setAccepting(false);
   }
 };
 
@@ -514,7 +751,7 @@ const handleAddDish = async () => {
   }
 
   try {
-    const res = await fetch(`/api/admin/${restaurantId}/menu`, {
+    const res = await fetch(`http://localhost:5000/api/admin/${restaurantId}/menu`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -546,7 +783,7 @@ const handleAddDish = async () => {
   const handleDelete = async (itemId) => {
     try {
       const res = await fetch(
-        `/api/admin/${restaurantId}/menu/${itemId}`,
+        `http://localhost:5000/api/admin/${restaurantId}/menu/${itemId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -585,7 +822,7 @@ const handleAddDish = async () => {
   
       const token = localStorage.getItem("token");
   
-      const response = await fetch(`/api/clearTable/${tableNumber}`, {
+      const response = await fetch(`http://localhost:5000/api/clearTable/${tableNumber}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -615,7 +852,7 @@ const handleAddDish = async () => {
   const fetchOrderHistory = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`/api/admin/${restaurantId}/order-history`, {
+      const res = await fetch(`http://localhost:5000/api/admin/${restaurantId}/order-history`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -659,7 +896,6 @@ const handleAddDish = async () => {
   }, {})
 );
 
-const [orderStatuses, setOrderStatuses] = useState({});
 
 // Initialize orderStatuses when orders change
 useEffect(() => {
@@ -698,7 +934,7 @@ const handleStatusChange = (orderId, newStatus) => {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen  p-8">
               <Helmet>
         <title>Petoba | Digital QR Menu & Ordering</title>
         <meta
@@ -720,7 +956,7 @@ const handleStatusChange = (orderId, newStatus) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://yash.avenirya.com" />
       </Helmet>
-      <h2 className="text-3xl font-bold mb-7 text-center text-orange-600">🍽️ Admin Dashboard</h2>
+      <h2 className="text-3xl font-bold mb-7 text-center text-orange-600">🍽️ {restaurantDetails.name}</h2>
       <audio ref={audioRef} src="/components/notification.mp3" preload="auto" />
 {/* Tabs */}
 <div className="mb-6 flex justify-center">
@@ -729,7 +965,7 @@ const handleStatusChange = (orderId, newStatus) => {
       { key: "orders", label: "Orders" },
       { key: "billing", label: "Billing" },
       { key: "menu", label: "Menu" },
-      { key: "addDish", label: "Add Dish" },
+      // { key: "addDish", label: "Add Dish" },
       { key: "history", label: "Order History" },
       { key: "offers",   label: "Offers" },   
     ].map((tab) => (
@@ -753,8 +989,31 @@ const handleStatusChange = (orderId, newStatus) => {
     <h2 className="text-2xl font-semibold mb-6 text-orange-600">
       🎁 Offer Section
     </h2>
+    {/* Existing offers */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {offers.map((o) => (
+        <div key={o._id} className="relative border p-2 rounded">
+          <img
+            src={o.image}
+            alt="Offer"
+            className="w-full object-cover rounded"
+            style={{ height: 200, width: 600 }}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Uploaded on: {new Date(o.createdAt).toLocaleString()}
+          </p>
+          <button
+            onClick={() => handleDeleteOffer(o._id)}
+            className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded"
+          >
+            Delete
+          </button>
+        </div>
+      ))}
+    </div>
 
-    {/* Upload form */}
+
+        {/* Upload form */}
     <div className="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto mb-8">
       <h3 className="mb-4 font-medium">Add New Offer</h3>
       <input
@@ -777,29 +1036,6 @@ const handleStatusChange = (orderId, newStatus) => {
       >
         Upload Offer
       </button>
-    </div>
-
-    {/* Existing offers */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {offers.map((o) => (
-        <div key={o._id} className="relative border p-2 rounded">
-          <img
-            src={o.image}
-            alt="Offer"
-            className="w-full object-cover rounded"
-            style={{ height: 270, width: 600 }}
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Uploaded on: {new Date(o.createdAt).toLocaleString()}
-          </p>
-          <button
-            onClick={() => handleDeleteOffer(o._id)}
-            className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded"
-          >
-            Delete
-          </button>
-        </div>
-      ))}
     </div>
   </div>
 )}
@@ -832,6 +1068,13 @@ const handleStatusChange = (orderId, newStatus) => {
         >
           Close
         </button>
+      {/* Added: Print KOT button in popup */}
+        <button
+          onClick={() => printKOT(newOrderPopup)}
+          className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+        >
+          Print KOT
+        </button>
         <button
           onClick={handleAccept}
           className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
@@ -847,9 +1090,9 @@ const handleStatusChange = (orderId, newStatus) => {
         {activeTab === "menu" && (
           <div>
             <h2 className="text-2xl font-semibold mb-6 text-orange-600 flex items-center gap-2">Menu</h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
               {menu.map((item) => (
-                <div key={item._id} className="border border-gray-200 p-4 rounded-lg shadow hover:shadow-lg bg-white">
+                <div key={item._id} className="border border-gray-200 p-2 rounded-lg shadow hover:shadow-lg bg-white">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -858,12 +1101,12 @@ const handleStatusChange = (orderId, newStatus) => {
                   <h3 className="text-lg font-semibold">{item.name}</h3>
                   <p className="text-sm text-gray-500">{item.category}</p>
                   <p className="text-lg font-bold text-orange-600">₹ {item.price}</p>
-                  <button
+                  {/* <button
                     onClick={() => handleDelete(item._id)}
-                    className="mt-4 text-sm text-red-500 hover:text-red-700"
+                    className="mt-2 text-sm text-red-500 hover:text-red-700"
                   >
                     Delete Dish
-                  </button>
+                  </button> */}
                 </div>
               ))}
             </div>
@@ -960,7 +1203,7 @@ const handleStatusChange = (orderId, newStatus) => {
     {orders.length === 0 ? (
       <p className="text-gray-500 text-center mt-10">No orders yet.</p>
     ) : (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {orders
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .map((order) => (
@@ -991,6 +1234,13 @@ const handleStatusChange = (orderId, newStatus) => {
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-600">Total</span>
                 <span className="text-xl font-bold text-green-600">₹{order.total}</span>
+                 {/* Added: Print KOT button in each order card */}
+                <button
+                  onClick={() => printKOT(order)}
+                  className="px-3 py-1 rounded bg-blue-500 text-white text-sm hover:bg-blue-600"
+                >
+                  Print KOT
+                </button>
               </div>
             </div>
           ))}
@@ -1006,7 +1256,7 @@ const handleStatusChange = (orderId, newStatus) => {
     {billingData.length === 0 ? (
       <p className="text-gray-500">No billing data available.</p>
     ) : (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {billingData.map((data) => (
           <div
             key={data.tableNumber}
@@ -1021,7 +1271,7 @@ const handleStatusChange = (orderId, newStatus) => {
 
             {/* Display order items for each table */}
             <div className="mt-4">
-              <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-[50%,25%,25%] gap-0 mb-4">
                 <div className="font-semibold">Item</div>
                 <div className="font-semibold text-center">Qty</div>
                 <div className="font-semibold text-right">Price</div>
@@ -1030,7 +1280,7 @@ const handleStatusChange = (orderId, newStatus) => {
               {data.orders.map((order) => (
                 <div key={order._id} className="space-y-2">
                   {order.items.map((item, idx) => (
-                    <div key={idx} className="grid grid-cols-3 gap-4 border-b py-2">
+                    <div key={idx} className="grid grid-cols-[50%,25%,25%] gap-0 border-b py-2">
                       <div>{item.itemId?.name || "Deleted Item"}</div>
                       <div className="text-center">{item.quantity}</div>
                       <div className="text-right">₹{item.price ? item.price.toFixed(2) : "N/A"}</div>
@@ -1056,21 +1306,36 @@ const handleStatusChange = (orderId, newStatus) => {
               </div>
 
               {/* Buttons: Print & Clear Table */}
-              <div className="text-center mt-4">
-                <button
-                  onClick={() => printBill(data.tableNumber)}
-                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                >
-                  Print Bill
-                </button>
+              <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+    <div className="flex justify-center mt-4 gap-3 flex-wrap">
+  <button
+    onClick={() => shareBillViaWhatsApp(data.tableNumber)}
+    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm py-1.5 px-3 rounded-lg shadow-sm transition-all duration-200 hover:scale-105"
+  >
+    <i className="fa-brands fa-whatsapp text-base"></i>
+    WhatsApp
+  </button>
 
-                <button
-                  onClick={() => clearTable(data.tableNumber)}
-                  className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 ml-2"  // ✅ Added spacing
-                >
-                  Clear Table
-                </button>           
-              </div>
+  <button
+    onClick={() => printBill(data.tableNumber)}
+    className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white text-sm py-1.5 px-3 rounded-lg shadow-sm transition-all duration-200 hover:scale-105"
+  >
+    <i className="fa-solid fa-print text-base"></i>
+    Print
+  </button>
+
+  <button
+    onClick={() => clearTable(data.tableNumber)}
+    className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm py-1.5 px-3 rounded-lg shadow-sm transition-all duration-200 hover:scale-105"
+  >
+    <i className="fa-solid fa-trash text-base"></i>
+    Clear
+  </button>
+</div>
+
 
             </div>
           </div>
@@ -1135,7 +1400,7 @@ const handleStatusChange = (orderId, newStatus) => {
             <p className="text-gray-500 text-lg">No matching orders found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredOrders.map((order) => (
               <div
                 key={order.invoiceNumber}

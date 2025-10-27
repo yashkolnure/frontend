@@ -21,7 +21,7 @@ const CustomFieldsModal = ({ token }) => {
   // ✅ Load data from backend when modal opens
   useEffect(() => {
     if (isOpen && restaurantId) {
-      fetch(`/api/admin/custom-fields?restaurantId=${restaurantId}`, {
+      fetch(`http://localhost:5000/api/admin/custom-fields?restaurantId=${restaurantId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => (res.ok ? res.json() : null))
@@ -80,7 +80,7 @@ const CustomFieldsModal = ({ token }) => {
     setMessage("⏳ Saving...");
 
     try {
-      const res = await fetch("/api/admin/custom-fields", {
+      const res = await fetch("http://localhost:5000/api/admin/custom-fields", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
