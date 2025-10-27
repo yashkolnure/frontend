@@ -39,6 +39,7 @@ import Kolnuree from "./pages/kolnureyash";
 import MembershipUpgrade from "./pages/MembershipUpgrade";
 import UploadMenuPage from "./pages/uploadmenu";
 import RedirectManagerPage from "./pages/redirectpage";
+import PetobaBillingLanding from "./pages/BillingLanding";
 
 // Wrapper to handle conditional Header/Footer
 function AppWrapper() {
@@ -95,11 +96,12 @@ function AppWrapper() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard1" element={<Dashboard1 />} />
         <Route path="/bulk-upload" element={<BulkUploadInfo />} />
-        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/portfolio" element={<FeaturesPage />} />
         <Route path="/kolnure" element={<Kolnure />} />
         <Route path="/kolnure1" element={<Kolnuree />} />
         <Route path="/MembershipUpgrade" element={<MembershipUpgrade />} />
         <Route path="/upload-menu" element={<UploadMenuPage />} />
+        <Route path="/petoba-billing-landing" element={<PetobaBillingLanding />} />
       </Routes>
       {!hideHeaderFooter && <Footer />}
     </>

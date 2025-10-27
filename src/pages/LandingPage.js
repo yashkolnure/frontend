@@ -1,5 +1,6 @@
 import {React, useRef, useState, useEffect } from 'react';
 import { Helmet } from "react-helmet";
+import HomePagePortfolioSection from "../components/HomePagePortfolioSection";
 import {
   QrCode,
   MessageCircle,
@@ -130,8 +131,8 @@ const cssStyles = `
     }
     
     .how-it-works-section-creative .step-card-creative {
-      width: 80%;
-      max-width: 320px;
+      width: 90%;
+      max-width: 420px;
     }
     
     /* Reset zig-zag transforms */
@@ -224,91 +225,9 @@ const features = [
   ];
 
 const HomePage = () => {
-  const screenshots = [
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/1.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/2.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/3.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/4.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/5.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/6.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/8.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/9.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/10.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/11.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/12.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/13.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/14.jpg",
-        "https://petoba.avenirya.com/wp-content/uploads/2025/08/15.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/16.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/17.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/18.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/19.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/20.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/21.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/22.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/23.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/24.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/25.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/26.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/27.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/28.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/29.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/30.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/31.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/32.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/33.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/34.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/35.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/36.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/37.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/38.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/39.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/40.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/41.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/42.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/43.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/44.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/45.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/46.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/47.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/48.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/49.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/50.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/51.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/52.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/53.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/54.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/55.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/56.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/57.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/58.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/59.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/60.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/61.jpg",
-    "https://petoba.avenirya.com/wp-content/uploads/2025/08/62.jpg",
-    // Add all 60+ screenshot URLs here
-  ];
-
      const [currentIndices, setCurrentIndices] = useState([0, 1, 2]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newIndices = [];
-      const used = new Set();
-      while (newIndices.length < 3) {
-        const randomIndex = Math.floor(Math.random() * screenshots.length);
-        if (!used.has(randomIndex)) {
-          newIndices.push(randomIndex);
-          used.add(randomIndex);
-        }
-      }
-      setCurrentIndices(newIndices);
-    }, 2000); // change images every 2 seconds
 
-    return () => clearInterval(interval);
-
-
-  }, [screenshots.length]);
 
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -501,7 +420,7 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
 
       {/* Hero Section */}
       <section className="relative py-10">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center ">
           {/* Left: Text */}
           <div className="md:w-1/2 text-center md:text-left">
             <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
@@ -607,8 +526,8 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
 <style>{cssStyles}</style>
 
         <section className="how-it-works-section-creative">
-          
-            <div className="text-4xl font-extrabold text-center  mb-10 text-gray-900 ">
+
+            <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center ">
               <h2 className="mb-20">How It Works</h2>
             
             <div className="steps-container-creative">
@@ -629,7 +548,7 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
 {/* Key Features - Multi-Info Professional Style */}
 <section className="py-16 items-center">
   <div className="max-w-7xl mx-auto px-6 items-center ">
-    <h2 className="text-4xl font-extrabold text-center  mb-10 text-gray-900">
+    <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center pb-10">
       Key Features You’ll Get
     </h2>
 
@@ -696,7 +615,7 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
 {/* How It Works Section */}
 <section className="relative py-10 bg-transparent">
   <div className="max-w-7xl mx-auto px-6 text-center">
-    <h2 className="text-4xl font-extrabold mb-4 text-gray-900">
+    <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
       How It Works: Your Menu, Online
     </h2>
     <p className="text-lg text-gray-700 mb-10 max-w-2xl mx-auto">
@@ -735,58 +654,14 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
     </div>
   </div>
 </section>
-<section className="py-10 bg-transparent">
-  <div className="max-w-6xl mx-auto text-center">
-    <h2 className="text-4xl md:text-4xl font-bold mb-8 text-gray-900">
-      1,000+ Menus Delivered
-    </h2>
-
-    {/* 👇 Mobile: horizontal scroll */}
-    <div className="flex md:hidden gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide">
-      {screenshots.map((src, idx) => (
-        <div
-          key={idx}
-          className="flex-shrink-0 w-72 snap-center relative rounded-3xl shadow-lg overflow-hidden border-4 border-gray-200"
-        >
-          <img
-            src={src}
-            alt={`Menu Screenshot ${idx + 1}`}
-            className="w-full h-full object-cover rounded-2xl"
-          />
-        </div>
-      ))}
-    </div>
-
-    {/* 👇 Desktop: your existing animated 3-cards layout */}
-    <div className="hidden md:flex gap-4 justify-center items-end">
-      {currentIndices.map((idx, index) => {
-        const isMiddle = index === 1; // middle slide
-        return (
-          <div
-            key={idx}
-            className={`relative rounded-3xl shadow-xl overflow-hidden border-8 border-gray-200 transition-transform duration-500 hover:scale-[1.02] ${
-              isMiddle ? "w-80 md:w-94 md:h-[580px]" : "w-72 md:w-80 md:h-[550px]"
-            }`}
-          >
-            <img
-              src={screenshots[idx]}
-              alt={`Menu Screenshot ${idx + 1}`}
-              className="w-full h-full object-cover rounded-2xl"
-            />
-          </div>
-        );
-      })}
-    </div>
-  </div>
-
-</section>
 
 
+<HomePagePortfolioSection />
 
- <section className="relative py-16">
+<section className="relative py-16">
       <div className="max-w-6xl mx-auto px-6 text-center">
         {/* Page Header */}
-        <h2 className="text-4xl font-bold mb-4">All Features</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center mb-4">All Features</h2>
         <p className="text-gray-600 mb-12">
           Everything you need to modernize your restaurant and delight customers.
         </p>
@@ -813,7 +688,7 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
 <section className=" py-16 sm:py-24">
   <div className="max-w-6xl mx-auto px-6">
     <div className="text-center">
-      <h2 className="text-4xl font-extrabold text-gray-900">
+      <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
         Frequently Asked Questions
       </h2>
       <p className="mt-4 text-lg text-gray-600">
