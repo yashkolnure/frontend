@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 
 
-const API_BASE = "";
+const API_BASE = "https://yash.avenirya.com";
 
 const CustomFieldsDisplay = ({ restaurantId }) => {
   const [fields, setFields] = useState(null);
@@ -17,33 +17,21 @@ const CustomFieldsDisplay = ({ restaurantId }) => {
 
   useEffect(() => {
     if (!restaurantId) {
-      // show a neutral loading state while waiting for parent to resolve id
-      setError("");
-      setFields(null);
-      setLoading(true);
+      setError("Missing restaurantId");
+      setLoading(false);
       return;
     }
 
     const fetchFields = async () => {
       try {
-        // clear old error and show loading while fetching
-        setError("");
-        setLoading(true);
-
         const res = await fetch(
-          `${API_BASE}http://localhost:5000/api/admin/custom-fields?restaurantId=${restaurantId}`
+          `${API_BASE}/api/admin/custom-fields?restaurantId=${restaurantId}`
         );
-
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(text || `Request failed with status ${res.status}`);
-        }
 
         const data = await res.json();
         setFields(data);
       } catch (e) {
         setError(e.message || "Failed to fetch fields");
-        setFields(null);
       } finally {
         setLoading(false);
       }
@@ -53,6 +41,8 @@ const CustomFieldsDisplay = ({ restaurantId }) => {
   }, [restaurantId]);
 
   if (loading) return <p className="text-gray-500">Loading info...</p>;
+  if (error) return <p className="text-red-600">Error: {error}</p>;
+  if (!fields) return <p className="text-gray-500">No info found.</p>;
 
   return (
     <div className="text-center space-y-4 mt-8 mb-2">
