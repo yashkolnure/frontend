@@ -12,7 +12,7 @@ function Loginfree() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      navigate("/admin/dashboard");
+      navigate("/dashboard");
     }
   }, [navigate]);
 
@@ -30,7 +30,7 @@ function Loginfree() {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("restaurantId", data.restaurant._id);
-        navigate("/admin/dashboard");
+        navigate("/dashboard");
       } else {
         setError(data.message || "Invalid email or password");
       }
