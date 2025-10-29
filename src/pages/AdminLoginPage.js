@@ -20,7 +20,7 @@ function AdminLoginPage() {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("restaurantId", data.restaurant._id);
-        navigate("/admin/dashboard");
+        navigate("/dashboard");
       } else {
         alert(data.message || "Login failed");
       }
