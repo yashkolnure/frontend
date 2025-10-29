@@ -4,6 +4,7 @@ import { FaPlus } from "react-icons/fa";
 function MenuCard({ item, addToCart }) {
   const [expanded, setExpanded] = useState(false);
   const descRef = useRef(null);
+  const [imageError, setImageError] = useState(false);
   const [descHeight, setDescHeight] = useState("3rem"); // default height for 2 lines
 
   useEffect(() => {
@@ -16,11 +17,14 @@ function MenuCard({ item, addToCart }) {
   return (
     <div className="relative bg-white/80 backdrop-blur-lg border border-gray-200 rounded-2xl shadow-md p-3 m-2 w-full max-w-md flex items-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full">
       {/* Image */}
-<img
-  src={item.image || "https://via.placeholder.com/100"}
-  alt={item.name}
-  className="w-20 h-20 rounded-xl object-cover shadow-sm border"
-/>
+      {Boolean(item.image?.trim()) && !imageError && (
+          <img
+            src={item.image}
+            alt={item.name}
+            onError={() => setImageError(true)}
+            className="w-20 h-20 rounded-xl object-cover shadow-sm border"
+          />
+        )}
 
 
       {/* Info */}
