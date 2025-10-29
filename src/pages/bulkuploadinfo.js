@@ -90,7 +90,7 @@ const handleUpload = async () => {
   try {
     setUploading(true);
     await axios.post(
-      "/api/admin/bulk",
+      "https://yash.avenirya.com/api/admin/bulk",
       enrichedData,
       { headers: { Authorization: `Bearer ${token}` } }
     );

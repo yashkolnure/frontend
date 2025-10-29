@@ -31,7 +31,7 @@ function RestaurantMenuPage() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `/api/admin/${id}/offers`,
+          `https://yash.avenirya.com/api/admin/${id}/offers`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();
@@ -53,10 +53,10 @@ function RestaurantMenuPage() {
         const token = localStorage.getItem("token");
 
         const [menuRes, detailsRes] = await Promise.all([
-          fetch(`/api/admin/${id}/menu`, {
+          fetch(`https://yash.avenirya.com/api/admin/${id}/menu`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`/api/admin/${id}/details`, {
+          fetch(`https://yash.avenirya.com/api/admin/${id}/details`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -113,7 +113,7 @@ function RestaurantMenuPage() {
     if (!tableNumber) return toast.error("Please enter a valid table number.");
 
     try {
-      const res = await fetch("/api/order", {
+      const res = await fetch("https://yash.avenirya.com/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

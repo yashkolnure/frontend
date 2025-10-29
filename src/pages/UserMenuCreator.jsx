@@ -20,7 +20,7 @@ function UserMenuCreator() {
   const restaurantId = localStorage.getItem("restaurantId");
   const token = localStorage.getItem("token");
   const headers = { Authorization: `Bearer ${token}` };
-  const apiBase = "https://menubackend-git-main-yashkolnures-projects.vercel.app";
+  const apiBase = "https://yash.avenirya.com/";
 
   useEffect(() => {
     if (!restaurantId || !token) {

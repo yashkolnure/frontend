@@ -24,7 +24,7 @@ function BulkUploadmenu() {
       return;
     }
 
-    fetch(`/api/admin/${restaurantId}/details`, {
+    fetch(`https://yash.avenirya.com/api/admin/${restaurantId}/details`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -92,7 +92,7 @@ function BulkUploadmenu() {
     try {
       setUploading(true);
       await axios.post(
-        "/api/admin/bulk",
+        "https://yash.avenirya.com/api/admin/bulk",
         enrichedData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

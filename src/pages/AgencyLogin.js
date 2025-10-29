@@ -23,7 +23,7 @@ const AgencyLogin = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/admin/agency-login",
+        "http://localhost:5000https://yash.avenirya.com/api/admin/agency-login",
         { email, password }
       );
 

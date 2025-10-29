@@ -94,7 +94,7 @@ const RestaurantRegister = () => {
       const payload = { ...formData, slug: slugifyString(formData.name) };
 
       const response = await axios.post(
-        "/api/admin/restaurant/register",
+        "https://yash.avenirya.com/api/admin/restaurant/register",
         payload
       );
 

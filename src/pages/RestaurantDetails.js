@@ -9,7 +9,7 @@ function RestaurantDetails() {
   useEffect(() => {
     if (!restaurantId || !token) return;
 
-    fetch(`/api/admin/${restaurantId}/details`, {
+    fetch(`https://yash.avenirya.com/api/admin/${restaurantId}/details`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

@@ -112,7 +112,7 @@ const RegisterFreePage = () => {
     try {
     // ✅ Check if email exists first
     const checkRes = await axios.get(
-      `/api/admin/restaurants/check-email?email=${formData.email}`
+      `https://yash.avenirya.com/api/admin/restaurants/check-email?email=${formData.email}`
     );
 
     if (checkRes.data.exists) {
@@ -123,7 +123,7 @@ const RegisterFreePage = () => {
     // ✅ Proceed with free plan or payment
       if (formData.membership_level === 1) {
         const payload = { ...formData, slug: slugifyString(formData.name) };
-        await axios.post("/api/admin/restaurants", payload);
+        await axios.post("https://yash.avenirya.com/api/admin/restaurants", payload);
         setMessage("✅ Registered successfully with Free Plan!");
       setTimeout(() => navigate("/login"), 1000);
     } else {
@@ -135,7 +135,7 @@ const RegisterFreePage = () => {
           if (amount < 1) amount = 1; // avoid free or negative payment
         }
 
-      const { data } = await axios.post("/api/create-order", {
+      const { data } = await axios.post("https://yash.avenirya.com/api/create-order", {
         amount,
         currency: "INR",
       });
@@ -150,7 +150,7 @@ const RegisterFreePage = () => {
         order_id: data.id,
             handler: async function (response) {
           try {
-            const verifyRes = await axios.post("/api/verify-payment", {
+            const verifyRes = await axios.post("https://yash.avenirya.com/api/verify-payment", {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
@@ -158,7 +158,7 @@ const RegisterFreePage = () => {
 
             if (verifyRes.data.success) {
               const payload = { ...formData, slug: slugifyString(formData.name) };
-              await axios.post("/api/admin/restaurants", payload);
+              await axios.post("https://yash.avenirya.com/api/admin/restaurants", payload);
               setMessage("✅ Registered successfully with Paid Plan!");
               setTimeout(() => navigate("/login"), 1000);
             } else {

@@ -44,7 +44,7 @@ function RestaurantMenuPagewp() {
     }
 
     // Fallback: ask backend for the restaurant by slug to get the id
-    fetch(`/api/admin/restaurants/slug/${rawParam}`)
+    fetch(`https://yash.avenirya.com/api/admin/restaurants/slug/${rawParam}`)
       .then(res => res.json())
       .then(data => {
         // backend might return _id or id
@@ -57,7 +57,7 @@ function RestaurantMenuPagewp() {
       try {
         if (!id) return; // wait until id is resolved
         const token = localStorage.getItem("token");
-        const res = await fetch(`/api/admin/${id}/offers`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch(`https://yash.avenirya.com/api/admin/${id}/offers`, { headers: { Authorization: `Bearer ${token}` } });
         const data = await res.json();
         if (res.ok && Array.isArray(data)) setOffers(data);
       } catch {
@@ -78,10 +78,10 @@ function RestaurantMenuPagewp() {
         const token = localStorage.getItem("token");
 
         const [menuRes, detailsRes] = await Promise.all([
-          fetch(`/api/admin/${id}/menu`, {
+          fetch(`https://yash.avenirya.com/api/admin/${id}/menu`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`/api/admin/${id}/details`, {
+          fetch(`https://yash.avenirya.com/api/admin/${id}/details`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);

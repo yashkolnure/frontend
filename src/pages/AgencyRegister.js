@@ -80,7 +80,7 @@ const AgencyRegister = () => {
     if (!formData.email) return;
     try {
       const res = await axios.get(
-        `/api/admin/agency/check-email?email=${formData.email}`
+        `https://yash.avenirya.com/api/admin/agency/check-email?email=${formData.email}`
       );
       if (res.data.exists) setErrors({ email: "Email already exists" });
     } catch (err) {
@@ -119,7 +119,7 @@ const AgencyRegister = () => {
       }
 
       // Create Razorpay order
-      const orderRes = await axios.post("/api/create-order", {
+      const orderRes = await axios.post("https://yash.avenirya.com/api/create-order", {
         amount,
         currency: "INR",
       });
@@ -134,7 +134,7 @@ const AgencyRegister = () => {
         handler: async function (response) {
           try {
             // Register agency with payment details
-            await axios.post("/api/admin/register-agency", {
+            await axios.post("https://yash.avenirya.com/api/admin/register-agency", {
               agencyName: formData.agencyName,
               email: formData.email,
               contactNumber: formData.contactNumber,

@@ -9,7 +9,7 @@ const Kolnuree = () => {
   const [accessGranted, setAccessGranted] = useState(false);
   const [accessInput, setAccessInput] = useState("");
 
-  const correctPassword = "Admin@1234";
+  const correctPassword = "Yash$5828";
 
   const [formData, setFormData] = useState({
     agencyName: "",
@@ -34,7 +34,7 @@ const Kolnuree = () => {
     if (!formData.email) return;
     try {
       const res = await axios.get(
-        `/api/admin/agency/check-email?email=${formData.email}`
+        `https://yash.avenirya.com/api/admin/agency/check-email?email=${formData.email}`
       );
       if (res.data.exists) {
         setErrors((prev) => ({ ...prev, email: "Email already exists" }));
@@ -67,7 +67,7 @@ const Kolnuree = () => {
 
     try {
       await axios.post(
-        "/api/admin/register-agency",
+        "https://yash.avenirya.com/api/admin/register-agency",
         {
           agencyName: formData.agencyName,
           email: formData.email,

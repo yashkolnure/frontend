@@ -19,7 +19,7 @@ const MembershipUpgrade = ({ restaurant, setRestaurant, token }) => {
 
     try {
       const res = await axios.put(
-        `/api/restaurant/upgrade-membership/${restaurant._id}`,
+        `https://yash.avenirya.com/api/restaurant/upgrade-membership/${restaurant._id}`,
         { newLevel: Number(upgradeLevel) },
         { headers: { Authorization: `Bearer ${token}` } }
       );

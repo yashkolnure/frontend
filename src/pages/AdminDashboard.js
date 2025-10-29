@@ -63,7 +63,7 @@ useEffect(() => {
 const fetchOffers = async () => {
   try {
     const res = await fetch(
-      `http://localhost:5000/api/admin/${restaurantId}/offers`,
+      `http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/offers`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     const data = await res.json();
@@ -80,7 +80,7 @@ const handleAddOffer = async () => {
   }
   try {
     const res = await fetch(
-      `http://localhost:5000/api/admin/${restaurantId}/offers`,
+      `http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/offers`,
       {
         method: "POST",
         headers: {
@@ -117,7 +117,7 @@ const handleAddOffer = async () => {
     if (!window.confirm("Are you sure you want to delete this offer?")) return;
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/${restaurantId}/offers/${offerId}`,
+        `http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/offers/${offerId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -159,7 +159,7 @@ const handleImageUpload = (e) => {
   }
   const fetchRestaurantDetails = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/${restaurantId}/details`, {
+      const res = await fetch(`http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/details`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -180,7 +180,7 @@ const handleImageUpload = (e) => {
   // Fetch Menu
   const fetchMenu = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/${restaurantId}/menu`, {
+      const response = await fetch(`http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/menu`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -223,7 +223,7 @@ const handleImageUpload = (e) => {
   
   // Fetch Billing Data
   const fetchBillingData = async () => {
-    const res = await fetch(`http://localhost:5000/api/admin/${restaurantId}/billing`, {
+    const res = await fetch(`http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/billing`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -236,7 +236,7 @@ const handleImageUpload = (e) => {
     const fetchOrderHistory = async () => {
       setLoadingHistory(true); // move here so UI shows loading
       try {
-        const res = await fetch(`http://localhost:5000/api/orders/${restaurantId}/order-history`, {
+        const res = await fetch(`http://localhost:5000https://yash.avenirya.com/api/orders/${restaurantId}/order-history`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -578,7 +578,7 @@ const fetchAllOrders = async () => {
     if (!token || !restaurantId) return;
 
     const res = await fetch(
-      `http://localhost:5000/api/admin/${restaurantId}/orders`, // no ?status => all orders
+      `http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/orders`, // no ?status => all orders
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -617,7 +617,7 @@ const fetchPendingOrders = async () => {
     if (!token || !restaurantId) return;
 
     const res = await fetch(
-      `http://localhost:5000/api/admin/${restaurantId}/orders?status=pending`,
+      `http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/orders?status=pending`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -693,7 +693,7 @@ const handleAccept = async () => {
   setAccepting(true);
   try {
     const res = await fetch(
-      `http://localhost:5000/api/admin/${restaurantId}/orders/${current._id}`,
+      `http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/orders/${current._id}`,
       {
         method: "PUT",
         headers: {
@@ -751,7 +751,7 @@ const handleAddDish = async () => {
   }
 
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/${restaurantId}/menu`, {
+    const res = await fetch(`http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/menu`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -783,7 +783,7 @@ const handleAddDish = async () => {
   const handleDelete = async (itemId) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/${restaurantId}/menu/${itemId}`,
+        `http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/menu/${itemId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -822,7 +822,7 @@ const handleAddDish = async () => {
   
       const token = localStorage.getItem("token");
   
-      const response = await fetch(`http://localhost:5000/api/clearTable/${tableNumber}`, {
+      const response = await fetch(`http://localhost:5000https://yash.avenirya.com/api/clearTable/${tableNumber}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -852,7 +852,7 @@ const handleAddDish = async () => {
   const fetchOrderHistory = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/admin/${restaurantId}/order-history`, {
+      const res = await fetch(`http://localhost:5000https://yash.avenirya.com/api/admin/${restaurantId}/order-history`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

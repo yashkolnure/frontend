@@ -42,7 +42,7 @@ function RestaurantMenuPageCloud() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `/api/admin/${id}/offers`,
+          `https://yash.avenirya.com/api/admin/${id}/offers`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();
@@ -60,7 +60,7 @@ function RestaurantMenuPageCloud() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `/api/admin/${id}/details`,
+          `https://yash.avenirya.com/api/admin/${id}/details`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();
@@ -78,7 +78,7 @@ function RestaurantMenuPageCloud() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `/api/admin/${id}/menu`,
+          `https://yash.avenirya.com/api/admin/${id}/menu`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();

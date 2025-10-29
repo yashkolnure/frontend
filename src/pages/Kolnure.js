@@ -87,7 +87,7 @@ const Kolnure = () => {
     try {
       // ✅ Check if email exists
       const checkRes = await axios.get(
-        `/api/admin/restaurants/check-email?email=${formData.email}`
+        `https://yash.avenirya.com/api/admin/restaurants/check-email?email=${formData.email}`
       );
 
       if (checkRes.data.exists) {
@@ -107,7 +107,7 @@ const Kolnure = () => {
 
       const payload = { ...formData, slug: slugifyString(formData.name) };
       await axios.post(
-        "/api/admin/restaurant/register",
+        "https://yash.avenirya.com/api/admin/restaurant/register",
         payload
       );
 
@@ -134,7 +134,7 @@ const Kolnure = () => {
           <button
             className="w-full py-2 bg-blue-600 text-white rounded"
             onClick={() => {
-              if (accessInput === "Admin@1234") {
+              if (accessInput === "Yash$5828") {
                 setAccessGranted(true);
               } else {
                 alert("❌ Wrong Password");
