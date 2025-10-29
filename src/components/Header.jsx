@@ -100,10 +100,11 @@ const Header = () => {
               >
               Petoba Billing App
               </a>
+{/*               
             <a href="/contact" className="hover:text-blue-600 font-medium">
               Contact Us
             </a>
-            
+             */}
             <a href="/agency-login" className="hover:text-blue-600 font-medium">
               Partner Login
             </a>
@@ -119,7 +120,7 @@ const Header = () => {
                   onClick={handleLogout}
                   className="px-5 py-2 rounded-full text-xl bg-gradient-to-r from-red-600 via-black to-orange-600 text-white font-semibold shadow-md hover:scale-105 transition-transform"
                 >
-                  Logout
+                  Logout 
                 </button>
               </>
             ) : (
@@ -166,7 +167,7 @@ const Header = () => {
           <a href="/" onClick={closeMenu} className="hover:text-blue-600">Home</a>
           <a href="/portfolio" onClick={closeMenu} className="hover:text-blue-600">Portfolio</a>
           <a href="/agency-login" onClick={closeMenu} className="hover:text-blue-600">Partner Login</a>
-          <a href="/contact" onClick={closeMenu} className="hover:text-blue-600">Contact Us</a>
+          {/* <a href="/contact" onClick={closeMenu} className="hover:text-blue-600">Contact Us</a> */}
           {!token ? (
             <a href="/petoba-billing-landing" onClick={closeMenu} className="hover:text-blue-600">Petoba Billing App </a>
           ) : (null
