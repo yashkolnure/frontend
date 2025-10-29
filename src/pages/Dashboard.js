@@ -635,7 +635,7 @@ const handleUpdate = async () => {
   };
 
   const handleMenuClick = () => {
-    window.open(`/menuwp/${restaurant.slug}`, "_blank");
+    window.open(`/menuwp/${restaurantId}`, "_blank");
   };
 
 
